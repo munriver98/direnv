@@ -6,7 +6,7 @@ buildGoModule rec {
   version = lib.fileContents ./version.txt;
   subPackages = ["."];
 
-  vendorSha256 = "084x7d7sshcsyim76d6pl6127nlqacgwwnm965srl9y5w5nqzba6";
+  vendorSha256 = "10hyjgschnzkd00jg00fifd7qj8zkh4z63g0g357xbli93svnyyx";
 
   src = lib.cleanSource ./.;
 
