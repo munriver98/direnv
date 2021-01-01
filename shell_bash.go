@@ -43,11 +43,11 @@ func (sh bash) Dump(env Env) (out string) {
 }
 
 func (sh bash) export(key, value string) string {
-	return "export " + sh.escape(key) + "=" + sh.escape(value) + ";"
+	return "export " + sh.escape(key) + "=" + sh.escape(value) + ";\n"
 }
 
 func (sh bash) unset(key string) string {
-	return "unset " + sh.escape(key) + ";"
+	return "unset " + sh.escape(key) + ";\n"
 }
 
 func (sh bash) escape(str string) string {

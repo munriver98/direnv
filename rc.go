@@ -201,7 +201,7 @@ func (rc *RC) Load(previousEnv Env) (newEnv Env, err error) {
 
 		// TODO: re-implement some of the __main__ logic
 		prog, err = syntax.NewParser().Parse(
-			strings.NewReader(fmt.Sprintf(`set -e; set -o pipefail; __main__ source_env "%s"`, rc.Path())),
+			strings.NewReader(fmt.Sprintf(`set -euo pipefail; __main__ source_env "%s"`, rc.Path())),
 			"(source)",
 		)
 		if err != nil {
