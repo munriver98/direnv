@@ -40,6 +40,13 @@ func (env Env) CleanContext() {
 	delete(env, DIRENV_DIR)
 	delete(env, DIRENV_DUMP_FILE_PATH)
 	delete(env, DIRENV_WATCHES)
+
+	_, exists := env[DIRENV_TMPDIR]
+	if exists {
+		logDebug("dlete temporary directory: %#v", env[DIRENV_TMPDIR])
+		defer os.RemoveAll(env[DIRENV_TMPDIR])
+		delete(env, DIRENV_TMPDIR)
+	}
 }
 
 // LoadEnv unmarshals the env back from a gzenv string

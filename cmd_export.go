@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"sort"
 	"strings"
@@ -88,6 +89,13 @@ func exportCommand(currentEnv Env, args []string, config *Config) (err error) {
 			return
 		}
 	}
+
+	tmpdir, err := ioutil.TempDir("", "direnv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	logDebug("Temporary directory: %#v", tmpdir)
+	newEnv[DIRENV_TMPDIR] = tmpdir
 
 	if out := diffStatus(previousEnv.Diff(newEnv)); out != "" {
 		logStatus(currentEnv, "export %s", out)
