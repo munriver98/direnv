@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"sort"
 	"strings"
@@ -70,12 +69,15 @@ func exportCommand(currentEnv Env, args []string, config *Config) (err error) {
 		return
 	}
 
+	currentEnv.CleanTempDir()
+
 	if toLoad == "" {
 		logStatus(currentEnv, "unloading")
 		newEnv = previousEnv.Copy()
 		newEnv.CleanContext()
 	} else {
 		newEnv, err = config.EnvFromRC(toLoad, previousEnv)
+
 		if err != nil {
 			logDebug("err: %v", err)
 			// If loading fails, fall through and deliver a diff anyway,
@@ -86,16 +88,10 @@ func exportCommand(currentEnv Env, args []string, config *Config) (err error) {
 			// unless of course, the error was in hashing and timestamp loading,
 			// in which case we have to abort because we don't know what timestamp
 			// to put in the diff!
+
 			return
 		}
 	}
-
-	tmpdir, err := ioutil.TempDir("", "direnv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	logDebug("Temporary directory: %#v", tmpdir)
-	newEnv[DIRENV_TMPDIR] = tmpdir
 
 	if out := diffStatus(previousEnv.Diff(newEnv)); out != "" {
 		logStatus(currentEnv, "export %s", out)

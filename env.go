@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/direnv/direnv/gzenv"
 )
@@ -41,12 +44,35 @@ func (env Env) CleanContext() {
 	delete(env, DIRENV_DUMP_FILE_PATH)
 	delete(env, DIRENV_WATCHES)
 
+}
+
+// CleanTempDir remove temporary directory
+func (env Env) CleanTempDir() {
 	_, exists := env[DIRENV_TMPDIR]
 	if exists {
-		logDebug("dlete temporary directory: %#v", env[DIRENV_TMPDIR])
+		logDebug("Delete temporary directory: %#v", env[DIRENV_TMPDIR])
 		defer os.RemoveAll(env[DIRENV_TMPDIR])
 		delete(env, DIRENV_TMPDIR)
 	}
+}
+
+func (env Env) createTmpDir() {
+
+	tmpBase := filepath.Join(os.TempDir(), "direnv")
+
+	currentTime := time.Now()
+	direnvTempBase := filepath.Join(tmpBase, currentTime.Format("2006-01-02"))
+
+	if _, err := os.Stat(direnvTempBase); os.IsNotExist(err) {
+		os.RemoveAll(tmpBase)
+		err := os.MkdirAll(direnvTempBase, 0755)
+		if err != nil {
+		}
+	}
+
+	tempDir, _ := ioutil.TempDir(direnvTempBase, "direnv")
+	logDebug("Create temporary directory: %#v", tempDir)
+	env[DIRENV_TMPDIR] = tempDir
 }
 
 // LoadEnv unmarshals the env back from a gzenv string

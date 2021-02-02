@@ -77,6 +77,7 @@ func (rc *RC) Allow() (err error) {
 	if err = allow(rc.path, rc.allowPath); err != nil {
 		return
 	}
+
 	err = rc.times.Update(rc.allowPath)
 	return
 }
@@ -103,6 +104,7 @@ func (rc *RC) Allowed() bool {
 	}
 
 	// exact whitelists are O(1)ish to check, so look there first
+
 	if rc.config.WhitelistExact[path] {
 		return true
 	}
@@ -149,6 +151,9 @@ func (rc *RC) Load(previousEnv Env) (newEnv Env, err error) {
 		err = fmt.Errorf(notAllowed, rc.Path())
 		return
 	}
+
+	// previousEnv.CleanTempDir()
+	newEnv.createTmpDir()
 
 	prelude := ""
 	if config.StrictEnv {
